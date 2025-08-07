@@ -1,0 +1,53 @@
+{
+    "lang.en_us": "English (US)",
+
+    "title": "Crazy Cargo Crusade",
+    "version": "v%d.%d.%d",
+
+    "title.btn.story": "Story Mode",
+    "title.btn.marathon": "Marathon",
+    "title.btn.randomizer": "Randomizer",
+    "title.btn.exit": "Exit",
+
+    "popup.nostory.title": "Not Available!",
+    "popup.nostory.desc": "The story mode still is in development. Sorry!",
+
+    "popup.areyousure.title": "Are you sure?",
+    "popup.areyousure.desc": "It looks like your road could be improved so that it fully reaches the goal. But nobody will stop you otherwise!",
+    
+    "popup.scoreboard.title": "You Made it!",
+    "popup.scoreboard.desc": "Scoreboard:",
+    "popup.scoreboard.map": "Map: %s",
+    "popup.scoreboard.randomizer": "Randomizer (Seed %s)",
+
+    "popup.btn.enter": "Enter",
+    "popup.btn.yes": "Yes",
+    "popup.btn.no": "No",
+
+    "crash.reason.thread": "An unexpected error occured on the %s thread.",
+    "crash.minimum.size.title": "Your screen is too small for this game to run properly!",
+    "crash.minimum.size.text": "I'm not making the rules- wait...",
+    "crash.minimum.size.data": "Your screen size: %dx%d\nMinimum size required: %dx%d",
+    "crash.minimum.color.title": "Your computer does not support colors!",
+    "crash.minimum.color.text": "The game requires a color bit depth of at least 4 bit.",
+
+    "planner.title": "Plan a Path Towards the Warehouse!",
+    "planner.label.loading": "Loading",
+    "planner.btn.regenerate": "REGENERATE",
+    "planner.btn.undo": "UNDO",
+    "planner.btn.done": "DONE",
+
+    "game.title": "Deliver to the Warehouse!",
+    "game.label.far": "far",
+
+    "help.interface.category": "Interface",
+    "help.interface.planner.title": "Planner",
+    "help.interface.planner.desc": "Before actually driving, you need to plan out your route to the goal!\n\nUsing WASD or the arrow keys, you can build a road. Press backspace to undo and enter to start!",
+    "help.interface.hud.title": "Ingame HUD",
+    "help.interface.hud.desc": "On the upper side of the screen, you see your current target and the rough direction.\n\nIn the lower left corner is the speedrun timer (literally) and the lower right corner shows your current speed.",
+    "help.gameplay.category": "Gameplay",
+    "help.gameplay.randomizer.title": "Randomizer",
+    "help.gameplay.randomizer.desc": "Your goal is to reach the warehouse as fast as possible! Driving offroad slows you down, but might be worth for a shortcut!\n\nControl the vehicle using WASD or the arrow keys.",
+    "help.gameplay.obstacles.title": "Obstacles",
+    "help.gameplay.obstacles.desc": "When driving offroad, you may encounter obstacles.\n\nLakes and hills, for example, cannot be crossed, but driven around."
+}
