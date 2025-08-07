@@ -75,6 +75,7 @@ local state = {
     ---@type savestate
     savestate = {},
     seed = 0,
+    water = true
 }
 
 lang.select(state, state.language)
@@ -130,15 +131,17 @@ local function render()
         local currentTime = os.clock()
         local deltaTime = (currentTime - lastTime)
 
+        if state.water then
+            palette.fadeFor(win, colors.cyan, palette.GNOME.cyan, 0x1F717D, math.abs(t-1))
+            t = (t+0.02) % 2
+        end
+        
         -- Render frame
         if state.currentScr then
             win.freeze()
             state.currentScr.render(state, win, deltaTime)
             win.unfreeze()
         end
-
-        palette.fadeFor(win, colors.cyan, palette.GNOME.cyan, 0x1F717D, math.abs(t-1))
-        t = (t+0.02) % 2
 
         lastTime = currentTime
 

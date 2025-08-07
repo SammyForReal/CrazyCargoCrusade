@@ -3,6 +3,7 @@ local gui = require "gui"
 local const = require "const"
 local tiler = require "tiler"
 local lang  = require "lang"
+local palette = require "palette"
 
 ---@class screen.draw.self : scene
 local self = scene.new()
@@ -43,6 +44,8 @@ function self.init(state)
         return
     end
 
+    palette.apply(state.win)
+    
     if self.seed and #self.seed > 0 then
         state.seed = tonumber(self.seed) or os.time(os.date("*t"))
     else
@@ -52,6 +55,8 @@ function self.init(state)
 
     self.seedLast = math.huge
     self.seed = ""
+
+    self.transition = nil
 
     state.field = tiler.emptyField()
     self.generator = {
@@ -130,6 +135,12 @@ local function openHelp(state)
 end
 
 function self.tick(state, deltaTime)
+    if self.transition and self.transition <= -0.5 then
+        self.existing = false
+        scene.switchTo(state, state.scenes.game)
+        return
+    end
+
     -- Mouse Events
     if #state.mouseEvents > 0 then
         local w, h = state.win.getSize()
@@ -162,8 +173,7 @@ function self.tick(state, deltaTime)
                                 self.existing = true
                                 scene.switchTo(state, require "scene.popup.areyousure")
                             else
-                                self.existing = false
-                                scene.switchTo(state, state.scenes.game)
+                                self.transition = 1
                             end
                         end
                         self.btn.done = newBool
@@ -367,14 +377,23 @@ function self.tick(state, deltaTime)
             self.existing = true
             scene.switchTo(state, require "scene.popup.areyousure")
         else
-            self.existing = false
-            scene.switchTo(state, state.scenes.game)
+            self.transition = 1
         end
     end
 end
 
 function self.render(state, term, deltaTime)
     local w, h = term.getSize()
+
+    if self.transition then
+        state.water = false
+        for name, _ in pairs(palette.GNOME) do
+            palette.fadeFor(term, colors[name], palette.GNOME[name], palette.GNOME["black"], 1-math.max(0, self.transition))
+        end
+        self.transition = math.max(-0.5, self.transition - 0.02)
+    else
+        state.water = true
+    end
 
     term.setBackgroundColor(colors.black)
     term:clear()

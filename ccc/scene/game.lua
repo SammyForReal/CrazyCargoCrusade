@@ -4,6 +4,7 @@ local const = require "const"
 local tiler = require "tiler"
 local lang  = require "lang"
 local savestate = require "savestate"
+local palette   = require "palette"
 
 ---@class screen.game.self : scene
 local self = scene.new()
@@ -29,26 +30,12 @@ function self.init(state)
         return
     end
 
+    palette.apply(state.win)
+
     state.saved = false
     self.Pine3D = require("Pine3D")
 
     self.fov = 45
-
-    ---@as PineCamera
-    self.camera = {
-        x = 0,
-        y = 0.6,
-        z = 0,
-        rotX = 0,
-        rotY = 0,
-        rotZ = 0,
-        target = {
-            x = 0,
-            y = 0.6,
-            z = 0,
-            rotY = 0
-        }
-    }
 
     self.cameraSpeed = 6
     self.fovSpeedEffect = 20
@@ -80,6 +67,22 @@ function self.init(state)
         }
     }
 
+        ---@as PineCamera
+    self.camera = {
+        x = 0,
+        y = 0.6,
+        z = 0,
+        rotX = 0,
+        rotY = math.deg(self.player.rotY),
+        rotZ = 0,
+        target = {
+            x = 0,
+            y = 0.6,
+            z = 0,
+            rotY = 0
+        }
+    }
+
     self.finished = false
 
     self.create3DScreen(state)
@@ -88,7 +91,7 @@ function self.init(state)
     self.objects = {
         self.ThreeDFrame:newObject(fs.combine(state.rootPath, "models/vehicle"),
             self.player.x, self.player.y, self.player.z,
-            nil, self.player.rotY, nil
+            nil, (-self.player.rotY + math.rad(180)), nil
         )
     }
 
@@ -103,6 +106,21 @@ function self.init(state)
             )
 
            table.insert(self.objects, obj)
+        end
+    end
+
+    for fieldX=1, const.playfield.x do
+        for fieldZ=1, const.playfield.y do
+            local tile = state.field[fieldX][fieldZ]
+            if tile == const.tile.GOAL_WAREHOUSE then
+                for xd=-1,1 do
+                    for yd=-1,1 do
+                        if not (xd == 0 and yd == 0) then
+                            state.field[fieldX+xd][fieldZ+yd] = const.tile.GOAL_PARKINGLOT
+                        end
+                    end
+                end
+            end
         end
     end
 

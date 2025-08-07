@@ -2,6 +2,7 @@ local scene = require "scene.init"
 local const = require "const"
 local gui = require "gui"
 local lang  = require "lang"
+local palette = require "palette"
 
 ---@class screen.title.self : scene
 local self = scene.new()
@@ -11,7 +12,7 @@ local function exit(state)
 end
 
 local function randomizer(state)
-    scene.switchTo(state, state.scenes.planner)
+    self.transition = 1
 end
 
 local function story(state)
@@ -19,6 +20,10 @@ local function story(state)
 end
 
 function self.init(state)
+    palette.apply(state.win)
+
+    self.transition = nil
+
     ---@class screen.title.menu
     self.menu = {
         --[[{
@@ -102,6 +107,11 @@ local function mouseEvent(state, event, xCenter, yTop)
 end
 
 function self.tick(state, deltaTime)
+    if self.transition and self.transition <= -0.5 then
+            scene.switchTo(state, state.scenes.planner)
+        return
+    end
+
     local w, h = term.getSize()
     local xCenter = math.floor(w/2)
     local _, titleHeight = state.win.calculateBigFont("\159", getTitleOptions(w))
@@ -183,6 +193,15 @@ local function renderMenu(term)
 end
 
 function self.render(state, term, deltaTime)
+    if self.transition then
+        state.water = false
+        for name, _ in pairs(palette.GNOME) do
+            palette.fadeFor(term, colors[name], palette.GNOME[name], palette.GNOME["black"], 1-math.max(0, self.transition))
+        end
+        self.transition = math.max(-0.5, self.transition - 0.02)
+    else
+        state.water = true
+    end
     local w, h = term.getSize()
 
     -- Background

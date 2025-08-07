@@ -3,6 +3,7 @@ local const = require "const"
 local gui = require "gui"
 local lang  = require "lang"
 local strings = require "cc.strings"
+local palette = require "palette"
 
 ---@class screen.popup.areyousure.self : scene
 local self = scene.new()
@@ -15,10 +16,17 @@ function self.init(state)
     self.halfWidth = 21
     self.halfHeight = 4
 
+    self.transition = nil
+
     self.bg = state.win.getBackgroundColor()
 end
 
 function self.tick(state, deltaTime)
+    if self.transition and self.transition <= -0.5 then
+        scene.switchTo(state, state.scenes.game)
+        return
+    end
+
     if #state.mouseEvents > 0 then
         local w, h = term.getSize()
         local xCenter = math.floor(w/2 + 1)
@@ -38,7 +46,7 @@ function self.tick(state, deltaTime)
             local x = xCenter - self.halfWidth + width-6
             if event[2] == 1 then
                 if event[3] >= xleftYes and event[3] <= xleftYes+#labelYes+1 and event[4] == yCenter + self.halfHeight - 1 then
-                    scene.switchTo(state, state.scenes.game)
+                    self.transition = 1
                 elseif event[3] >= xLeftNo and event[3] <= xLeftNo+#labelNo+1 and event[4] == yCenter + self.halfHeight - 1 then
                     scene.switchTo(state, self.previousScr or state.scenes.title)
                 end
@@ -49,11 +57,21 @@ function self.tick(state, deltaTime)
     if state.pressed[keys["n"]] or state.pressed[keys["backspace"]] then
         scene.switchTo(state, self.previousScr or state.scenes.title)
     elseif state.pressed[keys["y"]] or state.pressed[keys["enter"]] then
-        scene.switchTo(state, state.scenes.game)
+        self.transition = 1
     end
 end
 
 function self.render(state, term, deltaTime)
+    if self.transition then
+        state.water = false
+        for name, _ in pairs(palette.GNOME) do
+            palette.fadeFor(term, colors[name], palette.GNOME[name], palette.GNOME["black"], 1-math.max(0, self.transition))
+        end
+        self.transition = math.max(-0.5, self.transition - 0.02)
+    else
+        state.water = true
+    end
+
     local w, h = term.getSize()
 
     if w ~= self.oldW or h ~= self.oldH and self.previousScr then

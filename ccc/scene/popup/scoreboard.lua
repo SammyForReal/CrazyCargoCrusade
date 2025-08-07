@@ -3,6 +3,7 @@ local const = require "const"
 local gui = require "gui"
 local lang  = require "lang"
 local strings = require "cc.strings"
+local palette = require "palette"
 
 ---@class screen.popup.scoreboard.self : scene
 local self = scene.new()
@@ -12,6 +13,8 @@ function self.init(state)
     self.oldW = w
     self.oldH = h
 
+    self.transition = nil
+
     self.halfWidth = 22
     self.halfHeight = 6
 
@@ -19,8 +22,13 @@ function self.init(state)
 end
 
 function self.tick(state, deltaTime)
-    if state.pressed[keys["enter"]] then
+    if self.transition and self.transition <= -0.5 then
         scene.switchTo(state, state.scenes.title)
+        return
+    end
+
+    if state.pressed[keys["enter"]] then
+        self.transition = 1
     end
 
     if #state.mouseEvents > 0 then
@@ -37,7 +45,7 @@ function self.tick(state, deltaTime)
             local x = xCenter - self.halfWidth + width-1-#label
             if event[2] == 1 then
                 if event[3] >= x and event[3] <= x+#label+1 and event[4] == yCenter + self.halfHeight - 1 then
-                    scene.switchTo(state, state.scenes.title)
+                    self.transition = 1
                 end
             end
         end
@@ -54,6 +62,15 @@ local function toTime(seconds)
 end
 
 function self.render(state, term, deltaTime)
+    if self.transition then
+        state.water = false
+        for name, _ in pairs(palette.GNOME) do
+            palette.fadeFor(term, colors[name], palette.GNOME[name], palette.GNOME["black"], 1-math.max(0, self.transition))
+        end
+        self.transition = math.max(-0.5, self.transition - 0.02)
+    else
+        state.water = true
+    end
     local w, h = term.getSize()
 
     if w ~= self.oldW or h ~= self.oldH and self.previousScr then

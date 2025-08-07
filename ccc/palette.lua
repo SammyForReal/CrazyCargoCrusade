@@ -21,7 +21,6 @@ palette.GNOME = {
     ["white"]     = 0xFFFFFF,
     ["yellow"]    = 0xF3F03E
 }
-palette._OLD = {}
 
 ---Applies the GNOME color palette and remembers the previous colors for later undoing.
 ---@param term term
@@ -31,7 +30,7 @@ function palette.apply(term)
     end
 end
 
----Undos the current palette to the one before.
+---Undos the current palette to the native one.
 ---@param term term
 function palette.undo(term)
     for color, _ in pairs(palette.GNOME) do
