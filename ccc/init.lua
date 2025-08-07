@@ -13,29 +13,6 @@ local win = gui.apply(
     window.create(term.current(), 1, 1, w, h, false)
 )
 
--- Ensure system meets requirements
-
-if w < 51 or h < 19 then
-    local crashScr = require "scene.crash"
-
-    win.unfreeze()
-    crashScr(win, lang.translatable("crash.minimum.size.title"), lang.translatable("crash.minimum.size.text"), lang.translatable("crash.minimum.size.data",
-        w, h,
-        51, 19
-    ))
-    palette.undo(term)
-
-    return
-elseif not term.isColor() then
-    local crashScr = require "scene.crash"
-
-    win.unfreeze()
-    crashScr(win, lang.translatable("crash.minimum.color.title"), lang.translatable("crash.minimum.color.text"), "")
-    palette.undo(term)
-
-    return
-end
-
 -- Prepare State
 
 local function crash(co, name, err)
@@ -81,6 +58,39 @@ local state = {
 lang.select(state, state.language)
 scene.switchTo(state, state.scenes.title)
 savestate.load(state)
+
+-- Ensure system meets requirements
+if not pcall(require, "Pine3D") then
+    local function download(downloadPath, savePath)
+        local rawData = http.get("https://raw.githubusercontent.com/Xella37/Pine3D/master/"..downloadPath)
+        local data = rawData.readAll()
+        local file = fs.open(savePath, "w")
+        file.write(data)
+        file.close()
+    end
+    download("Pine3D.lua", "Pine3D.lua")
+    download("betterblittle.lua", "betterblittle.lua")
+    download("noise.lua", "noise.lua")
+elseif w < 51 or h < 19 then
+    local crashScr = require "scene.crash"
+
+    win.unfreeze()
+    crashScr(win, lang.translatable("crash.minimum.size.title"), lang.translatable("crash.minimum.size.text"), lang.translatable("crash.minimum.size.data",
+        w, h,
+        51, 19
+    ))
+    palette.undo(term)
+
+    return
+elseif not term.isColor() then
+    local crashScr = require "scene.crash"
+
+    win.unfreeze()
+    crashScr(win, lang.translatable("crash.minimum.color.title"), lang.translatable("crash.minimum.color.text"), "")
+    palette.undo(term)
+
+    return
+end
 
 -- Gamelogic
 

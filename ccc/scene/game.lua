@@ -73,7 +73,8 @@ function self.init(state)
         y = 0.6,
         z = 0,
         rotX = 0,
-        rotY = math.deg(self.player.rotY),
+        rotY = math.deg(self.player.rotY
+    ),
         rotZ = 0,
         target = {
             x = 0,
